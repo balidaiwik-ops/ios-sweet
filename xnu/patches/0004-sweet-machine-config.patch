@@ -303,8 +303,8 @@ index 0000000..47cf553
 +++ b/pexpert/pexpert/arm64/BREEZE.h
 @@ -0,0 +1,17 @@
 +/*
-+ * Initial machine config for Redmi 13 5G (Qualcomm Parrot).
-+ * Firmware DTB facts: eight CPUs, 19.2 MHz architected timer, virtual PPI 11.
++ * Initial machine config for Redmi 13 5G (Qualcomm SM4450 / Ravelin).
++ * Firmware: eight CPUs, 19.2 MHz timer, virtual PPI index 11 (GIC INTID 27).
 + * This temporarily reuses SWEET generic ARM/GICv3 setup. It does not
 + * establish that the display, memory, or peripheral paths match.
 + */
@@ -316,7 +316,7 @@ index 0000000..47cf553
 +#define SWEET                     1
 +#include <pexpert/arm64/SWEET.h>
 +#undef SWEET_VTIMER_INTID
-+#define SWEET_VTIMER_INTID        11
++#define SWEET_VTIMER_INTID        27
 +
 +#endif /* _PEXPERT_ARM64_BREEZE_H */
 diff --git a/pexpert/pexpert/arm64/board_config.h b/pexpert/pexpert/arm64/board_config.h

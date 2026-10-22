@@ -1,12 +1,31 @@
 # iOS 16 on sweet (Redmi Note 10 Pro, SM7150) - working notes
 
+## 2026-10-22 BREEZE implementation handoff
+
+- Connected phone: `2406ERN9CI`, `breeze_in`, `SM4450`, vendor build
+  `OS3.0.9.0.WNUINXM`; bootloader is unlocked. DTB/DTBO selectors: 11/32.
+- The selected hardware family is Ravelin. The supplied Ravelin QRD live FDT
+  matches the selectors; the separate `breeze.dtb` is a Parrot alternative and
+  must not be used for the connected phone.
+- Added compile-time Breeze shim constants in `shim/board.h`, selected by
+  `BREEZE_BOARD=1`; build requires `SHIM_DTB` explicitly. Added `--breeze` to
+  `tools/mkadt.py`, using GICD/R `0x17200000`/`0x17260000`, timer 19.2 MHz,
+  virtual timer PPI index 11 (GIC INTID 27), UFS `0x01d84000`, splash RAM
+  `0xb8000000+0x02b00000`, and CPU MPIDRs 0..7. XNU managed RAM is the
+  reserved-range-free `0xef900000+0x10700000` bank.
+- `python -B tools/mkadt.py D:\\breeze.adt --breeze --dump` succeeded and
+  generated a 10,116-byte ADT. XNU/shim images have not been built: this host
+  has no `aarch64-linux-gnu-gcc` or `gh`, and C: has 0 bytes free. No device
+  boot or flash command was run. Panel output, power management, touch and
+  full storage/userland validation remain open.
+
 ## 2026-10-22 handoff: Redmi 13 5G (`breeze`) port assessment
 
 - User requested porting this project to Redmi 13 5G (`breeze`). The checkout
   contains no device dump, firmware, or board-specific source for that phone.
 - Confirmed from Xiaomi specs: Snapdragon 4 Gen 2 AE, 2 Cortex-A78 + 6
   Cortex-A55. Xiaomi's kernel source index lists `breeze-u-oss` for Redmi Note
-  13R, a sibling; verify board equivalence before relying on its DTS.
+  13R, a sibling.
 - Added `docs/PORTING_BREEZE.md` documenting the known facts, why the existing
   `sweet` configuration cannot boot `breeze`, and the hardware evidence needed
   for a safe first boot. No device code was changed and no boot image built.
@@ -37,6 +56,14 @@
   used it on the provided image to extract 14 DTBs under `work/breeze-dtbs/`
   (generated files stay outside git). The matching Parrot board-id 0,0 DTB is
   entry 07 and exactly matches the supplied external DTB.
+- ADB confirms connected phone model `2406ERN9CI`, product `breeze_in`, SoC
+  `SM4450`, vendor build `OS3.0.9.0.WNUINXM`, and unlocked bootloader. Reported
+  selectors are DTB index 11 / DTBO index 32. DTB 11 is Ravelin; the supplied
+  live FDT's Ravelin QRD identity is consistent. Its SHA-256 is
+  `97b6ee36c32f5f58b01c4ef0d9380dd5f02d40921f7d045b0da649b05ac1e396`.
+  ADB shell cannot read `/sys/firmware/fdt` due permissions; the supplied dump
+  is used as read-only evidence. Parrot entries in vendor_boot are for other
+  platform variants and must not be selected for this phone.
 - Added an experimental XNU `BREEZE` machine configuration reusing SWEET's
   generic ARM/GICv3 paths with the DTB's virtual timer PPI 11. The profile has
   two CPU clusters (A78 + A55); SWEET remains unchanged. Extended libpthread,

@@ -5,7 +5,12 @@ cd "$(dirname "$0")"
 CC=aarch64-linux-gnu-gcc
 OBJCOPY=aarch64-linux-gnu-objcopy
 CFLAGS="-O2 -ffreestanding -nostdlib -fno-pic -mgeneral-regs-only -mstrict-align -fno-stack-protector -Wall -Wextra"
+if [ "${BREEZE_BOARD:-0}" = 1 ]; then
+	CFLAGS="$CFLAGS -DBREEZE_BOARD"
+	: "${SHIM_DTB:?Set SHIM_DTB to the selected live Ravelin FDT (DTB index 11).}"
+else
 SHIM_DTB=${SHIM_DTB:-../dtb/boot_unpacked/dtb}
+fi
 if [ ! -f "$SHIM_DTB" ]; then
 	echo "error: DTB not found: $SHIM_DTB (set SHIM_DTB to the board DTB)" >&2
 	exit 1
