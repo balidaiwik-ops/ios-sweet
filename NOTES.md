@@ -1,5 +1,19 @@
 # iOS 16 on sweet (Redmi Note 10 Pro, SM7150) - working notes
 
+## 2026-10-22 handoff: Redmi 13 5G (`breeze`) port assessment
+
+- User requested porting this project to Redmi 13 5G (`breeze`). The checkout
+  contains no device dump, firmware, or board-specific source for that phone.
+- Confirmed from Xiaomi specs: Snapdragon 4 Gen 2 AE, 2 Cortex-A78 + 6
+  Cortex-A55. Xiaomi's kernel source index lists `breeze-u-oss` for Redmi Note
+  13R, a sibling; verify board equivalence before relying on its DTS.
+- Added `docs/PORTING_BREEZE.md` documenting the known facts, why the existing
+  `sweet` configuration cannot boot `breeze`, and the hardware evidence needed
+  for a safe first boot. No device code was changed and no boot image built.
+- Next step: obtain a stock `breeze` firmware/live device-tree set and exact
+  model/region, then derive a separate platform profile without changing the
+  working `sweet` path.
+
 ## Agent handoff / active work (2026-10-15, latest)
 
 ### >>> UPDATE 2026-10-18 (read first, then the 10-17 handoff below) <<<
