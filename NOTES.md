@@ -14,6 +14,26 @@
   model/region, then derive a separate platform profile without changing the
   working `sweet` path.
 
+### Firmware and DTB inspection update
+
+- User supplied Global India `OS3.0.9.0.WNUINXM` `boot.img` and `dtbo.img`,
+  plus `Resources/DTBs/breeze.dtb` from an adjacent local project. The matching
+  firmware directory also contains `vendor_boot.img`, `vbmeta.img`, and
+  `super.img`.
+- The provided `breeze.dtb` is byte-for-byte the Parrot board-id 0,0 DTB
+  embedded at offset `0xf9b1a4` in `vendor_boot.img`; SHA-256
+  `7f44ef8173f936ef060cb72b6c4ecded8bf6e2cebad601e6f1f338d982b0e203`.
+- That tree says `qcom,parrot`, Qualcomm Technologies Parrot SoC, MSM IDs
+  `0x219`/`0x265`, and 8 CPU MPIDRs `0x0..0x700`. Its memory/reg is zeroed;
+  use the selected live tree/boot logs to get actual usable memory and
+  reservations.
+- `dtbo.img` has 34 entries, with Parrot ATP, IDP, and QRD overlay families;
+  several display-panel and FocalTech/Novatek/Goodix touch configurations
+  appear. Exact selected overlay not determined; no hardware choice inferred.
+- Updated `docs/PORTING_BREEZE.md`. No boot image was modified or built, and no
+  device was accessed. Next: identify exact model/bootloader state and collect
+  the live selected DTB/overlay (or a boot log with its board selection).
+
 ## Agent handoff / active work (2026-10-15, latest)
 
 ### >>> UPDATE 2026-10-18 (read first, then the 10-17 handoff below) <<<

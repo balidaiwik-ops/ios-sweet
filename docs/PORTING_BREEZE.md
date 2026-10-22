@@ -18,14 +18,40 @@ SoC string would not make a bootable port.
 - This repository's `tools/mkadt.py`, `shim/` boot path, and XNU platform and
   peripheral drivers are currently specific to `sweet`.
 
+## Files inspected (2026-10-22)
+
+The provided Global India OS3.0.9.0.WNUINXM firmware set includes `boot.img`,
+`vendor_boot.img`, `dtbo.img`, `vbmeta.img`, and `super.img`. The separate
+`breeze.dtb` is byte-for-byte identical to one of the DTBs embedded in
+`vendor_boot.img` (SHA-256
+`7f44ef8173f936ef060cb72b6c4ecded8bf6e2cebad601e6f1f338d982b0e203`).
+
+The matched DTB identifies `Qualcomm Technologies, Inc. Parrot SoC`,
+compatible `qcom,parrot`, with MSM IDs `0x219` and `0x265`, board ID `0,0`,
+and eight CPU nodes with MPIDRs `0x0` through `0x700`. Its top-level Linux
+`memory/reg` is zeroed, so this DTB alone does not establish the RAM map used
+at boot. Vendor boot contains 14 concatenated DTBs for several SoC variants;
+the supplied file matches the Parrot `board-id 0,0` entry.
+
+The DTBO image has 34 overlay entries, including Parrot ATP, IDP and QRD
+families. Their configuration includes multiple panel choices and touch
+controllers (including FocalTech, Novatek and Goodix variants). The exact
+overlay selected on the physical phone is still unknown; do not pick one by
+guessing. The images are Android boot header version 4 (`boot.img` and
+`vendor_boot.img`) and a DTBO table. `vendor_boot.img` and `vbmeta.img` are
+present in the same firmware folder, even though they were not in the initial
+file list.
+
 ## Required before device bring-up
 
-Obtain a matching stock firmware and a complete device dump from the exact
-Redmi 13 5G variant. Keep all dumps outside git. At minimum, record:
+The matching factory images are now available. Keep all extracted/dumped
+artifacts outside git. The main remaining device-side evidence is the live
+DTB/selected-overlay result and bootloader handoff. At minimum, record:
 
 1. Model/region and firmware build; bootloader unlock state.
-2. `boot`, `vendor_boot`, `dtbo`, and `vbmeta` images, plus the live DTB/DTBO
-   selected by the bootloader. Preserve the originals for recovery.
+2. The live DTB/DTBO selected by the bootloader. The factory `boot`,
+   `vendor_boot`, `dtbo`, and `vbmeta` images are already available; preserve
+   the originals for recovery.
 3. Live memory map, reserved-memory carve-outs, CPU MPIDRs/topology, GIC
    distributor/redistributor, timer frequency/interrupt, and framebuffer
    physical address/format.
