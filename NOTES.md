@@ -10,9 +10,9 @@
 - Added `docs/PORTING_BREEZE.md` documenting the known facts, why the existing
   `sweet` configuration cannot boot `breeze`, and the hardware evidence needed
   for a safe first boot. No device code was changed and no boot image built.
-- Next step: obtain a stock `breeze` firmware/live device-tree set and exact
-  model/region, then derive a separate platform profile without changing the
-  working `sweet` path.
+- Next step: identify exact handset model/bootloader state and collect the
+  live selected DTB/overlay, then continue the separate profile without
+  changing the working `sweet` path.
 
 ### Firmware and DTB inspection update
 
@@ -33,6 +33,19 @@
 - Updated `docs/PORTING_BREEZE.md`. No boot image was modified or built, and no
   device was accessed. Next: identify exact model/bootloader state and collect
   the live selected DTB/overlay (or a boot log with its board selection).
+- Added `tools/extract-vendor-dtbs.py` for vendor_boot v3/v4 concatenated FDTs;
+  used it on the provided image to extract 14 DTBs under `work/breeze-dtbs/`
+  (generated files stay outside git). The matching Parrot board-id 0,0 DTB is
+  entry 07 and exactly matches the supplied external DTB.
+- Added an experimental XNU `BREEZE` machine configuration reusing SWEET's
+  generic ARM/GICv3 paths with the DTB's virtual timer PPI 11. The profile has
+  two CPU clusters (A78 + A55); SWEET remains unchanged. Extended libpthread,
+  BearSSL and HFS staging hooks to accept BREEZE. This is kernel-build
+  scaffolding only, not a bootable port; no XNU build has been run.
+- `shim/build.sh` now accepts `SHIM_DTB` to embed a selected board DTB, while
+  keeping the existing SWEET path as the default. Runtime memory and
+  framebuffer facts, selected overlay, matching XNU ADT/platform expert, and
+  peripheral drivers remain open. No boot image was built or booted.
 
 ## Agent handoff / active work (2026-10-15, latest)
 

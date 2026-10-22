@@ -42,6 +42,22 @@ guessing. The images are Android boot header version 4 (`boot.img` and
 present in the same firmware folder, even though they were not in the initial
 file list.
 
+The base Parrot tree also gives a GICv3 distributor at `0x17200000`,
+redistributors at `0x17260000`, and a 19.2 MHz architected timer with virtual
+timer PPI 11. The UFS controller is listed at `0x01d84000` but is `disabled`
+in that base tree; the bootloader's live state must establish whether the
+controller is actually usable. The firmware exposes CPU nodes for eight
+MPIDRs (`0x0` through `0x700`); the product CPU mix is six Cortex-A55 and two
+Cortex-A78 cores.
+
+The repository now has an experimental `BREEZE` XNU machine configuration
+that shares the existing generic ARM/GICv3 bring-up definitions and uses PPI
+11. The shim build also accepts `SHIM_DTB=/absolute/path/to/board.dtb`, and
+`tools/extract-vendor-dtbs.py` extracts/indexes the DTBs from a vendor boot
+image. This is kernel-build scaffolding only: the runtime RAM layout, selected
+panel/touch overlay, framebuffer handoff, and board-specific platform expert
+and drivers remain unimplemented. Do not boot a BREEZE image yet.
+
 ## Required before device bring-up
 
 The matching factory images are now available. Keep all extracted/dumped
